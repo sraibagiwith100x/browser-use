@@ -1617,8 +1617,13 @@ class BrowserContext:
 			disabled = await disabled_handle.json_value() if disabled_handle else False
 
 			# always click the element first to make sure it's in the focus
-			await element_handle.click()
-			await asyncio.sleep(0.1)
+			try:
+				await element_handle.click()
+				await asyncio.sleep(0.1)
+			except Exception as e:
+				logger.debug(f"❌  Failed to click element: {str(e)}")
+				logger.info("Skipping clicking element before fill.")
+				pass
 
 			try:
 				if (await is_contenteditable.json_value() or tag_name == 'input') and not (readonly or disabled):
